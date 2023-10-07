@@ -29,7 +29,7 @@ export function Filter({ filterItems }: FilterProps) {
       {isOpen && <div className="fixed inset-0 z-20"></div>}
       <Select
         ref={ref}
-        className="h-12 max-w-xs"
+        className="h-12 min-w-0"
         items={filterItems}
         selectedKeys={getFilters()?.map((id) => id)}
         onSelectionChange={(keys) => {
@@ -54,7 +54,7 @@ export function Filter({ filterItems }: FilterProps) {
         }}
         renderValue={(items: SelectedItems<FilterItem>) => {
           return (
-            <div className="no-scrollbar direction-rtl flex w-full gap-2 overflow-x-auto">
+            <div className="no-scrollbar direction-rtl flex gap-2 overflow-x-auto">
               {items.map((item) => (
                 <Chip key={item.key}>{item?.data?.name}</Chip>
               ))}

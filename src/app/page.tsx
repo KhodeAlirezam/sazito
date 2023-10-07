@@ -8,7 +8,6 @@ import { Filter } from "./components/Filter";
 import { Sort } from "./components/Sort";
 
 const ProductGrid = dynamic(() => import("@/app/components/VirtualGrid"), {
-  ssr: false,
   loading() {
     return <SpinnerPage className="h-full w-full opacity-50" />;
   },
@@ -26,7 +25,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   return (
     <>
-      <div className="flex h-16 items-center px-3 child:ml-3">
+      <div className="flex h-16 w-full items-center px-3 child:ml-3">
         {categories?.length && <Filter filterItems={categories} />}
         <Sort sortItems={sortItems} />
       </div>

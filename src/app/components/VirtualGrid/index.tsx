@@ -1,15 +1,15 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 
 import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeGrid as Grid } from "react-window";
+import { FixedSizeGrid, FixedSizeGrid as Grid } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 
 import { Nullable } from "@/lib/utils/types";
 
 import { GridCell } from "./GridCell";
-import { useProductsQuery } from "./useProductsQuery";
+import { useProductsQuery } from "./use-products-query";
 
 function getItemKey({
   columnIndex,
@@ -21,6 +21,7 @@ function getItemKey({
   return `${columnIndex} + ${rowIndex}`;
 }
 
+let scrollOffset = 0;
 const itemSize = 300;
 const cardRatio = 2.5 / 2;
 const minimumColumnCount = 2;
@@ -66,6 +67,22 @@ export default function ProductGrid({
     [products.length],
   );
 
+  //scroll restoration
+  const [gridRef, setGridRef] =
+    useState<
+      Nullable<
+        FixedSizeGrid<{ products: typeof products; columnCount: number }>
+      >
+    >(null);
+
+  useLayoutEffect(() => {
+    if (!gridRef || !scrollOffset || isLoading) {
+      return;
+    }
+
+    gridRef.scrollTo({ scrollTop: scrollOffset, scrollLeft: 0 });
+  }, [gridRef, isLoading]);
+
   return (
     <AutoSizer>
       {({ width, height }) => {
@@ -86,6 +103,7 @@ export default function ProductGrid({
             {({ onItemsRendered }) => {
               return (
                 <Grid
+                  useIsScrolling={true}
                   itemKey={getItemKey}
                   itemData={{ products, columnCount }}
                   width={width}
@@ -106,6 +124,10 @@ export default function ProductGrid({
                       visibleStartIndex,
                       visibleStopIndex,
                     })
+                  }
+                  ref={(ref) => setGridRef((prev) => (prev ? prev : ref))}
+                  onScroll={({ scrollTop }) =>
+                    scrollTop !== 0 && (scrollOffset = scrollTop)
                   }
                 >
                   {GridCell}

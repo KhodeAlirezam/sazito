@@ -21,10 +21,7 @@ function getGridIndex(
 }
 
 export function GridCell({ columnIndex, rowIndex, style, data }: Props) {
-  const { products, columnCount } = data as {
-    products: Product[];
-    columnCount: number;
-  };
+  const { products, columnCount } = data;
   const { name, images, id } =
     products[getGridIndex(rowIndex, columnIndex, columnCount)];
 
